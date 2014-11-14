@@ -63,6 +63,10 @@ body {
 		display: inline-block;
 	}
 
+	#raster_meta{
+		display: none;
+	}
+
 	table{
 		width:90%;
 		margin: 50px 5%;

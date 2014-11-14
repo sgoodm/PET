@@ -35,7 +35,7 @@
 
         <div id="data_upload">
             <div>Upload Your Data:</div>
-            <input type="file" id="data_file"  class="input" value="" multiple>
+            <input type="file" id="data_file"  class="input required" value="" multiple>
         </div>
     </div>
 
@@ -49,7 +49,7 @@
 <div id="raster">
     <div id="raster_options">
         <div class="input_name">Select a Raster:</div>
-        <select id="raster_list"></select>
+        <select id="raster_list" class="required"></select>
     </div>
     <div id="raster_meta">
         <table>
@@ -60,7 +60,7 @@
 </div>
 
 <div id="request">
-    Email: <input type="text" id="request_email" value="">
+    Email: <input type="text" id="request_email" class="required" value="">
     <br>
     <br>
     <button id="request_submit"  type="button" disabled="true">Submit Request</button> 
