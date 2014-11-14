@@ -1,0 +1,80 @@
+
+body {
+	padding:50px 10%;
+    font-family: 'Open Sans', sans-serif;
+}
+
+#header{
+	padding: 10px 50px;
+    font-size: 26px;
+    border-bottom: 1px solid #464646
+}
+
+#data{
+	padding: 2.5% 5%;
+    border-bottom: 1px solid rgba(200,200,200,1)
+
+}
+	
+	#data_info{
+		height: 100%;
+		width:65%;
+		display: inline-block;
+	}
+
+		.input{
+			display: block;
+			margin-top: 5px;
+			margin-left:10%;
+		}
+
+		#data_info>*{
+			margin: 20px 0;
+		}
+
+		#data_naming{
+			display: none;
+		}
+
+
+
+	#data_warning{
+		width:25%;
+		display: inline-block;
+		float:right;
+	}
+		#data_warning_title{
+			width:100%;
+			text-align: center;
+		}
+
+		#data_warning_content{
+
+		}
+
+
+#raster{
+	padding: 2.5% 5%;
+    border-bottom: 1px solid rgba(200,200,200,1)
+
+}
+
+	#raster_options>*{
+		display: inline-block;
+	}
+
+	table{
+		width:90%;
+		margin: 50px 5%;
+	}
+
+		table, tr, td, th {
+			padding:5px;
+			border: 1px solid rgba(100,100,100,1);
+			border-collapse: collapse;
+		}
+
+#request{
+	padding: 2.5% 5%;
+	text-align: center;
+}
