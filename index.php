@@ -66,7 +66,9 @@
     <button id="request_submit"  type="button" disabled="true">Submit Request</button> 
 </div>
 
-
+<div id="confirmation">
+    
+</div>
 
 </body>
 
