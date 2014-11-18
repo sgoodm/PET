@@ -2,27 +2,71 @@ $(document).ready(function(){
 
 	//init page
 	$('#data_vector').click()
+	$('#data_id').val('GeoID')
 	$('#data_naming_x').val('x')
 	$('#data_naming_y').val('y')
 	$('#data_file').val('')
 	$('#request_email').val('')
 	$('#request_submit').prop('disabled', true)
 
+	var output = {	
+					"request":9999, "submission":0, "completion":0, "expiration":0, "email":"", 
+					"dataType":"vector", "data":1, "fileType":1, "id":"GeoID", "longitude":"longitude", "latitude":"latitude", "raster":[],
+					"error":0
+				}
 
 	//vector section
 	$('input[name="data_type"]').on("change", function(){
 		$('#data_file').val('')
 
+		output.dataType = $(this).val()
+
 		if ( $('input[name="data_type"]:checked').val() == "raw" ){
 			$('#data_naming').show()
-			$("#data_naming_x , #data_naming_y").addClass("required")
+			$("#data_naming_longitude , #data_naming_latitude").addClass("required")
 			$('#data_file').prop('multiple', false)
 		} else {
 			$('#data_naming').hide()
-			$("#data_naming_x , #data_naming_y").removeClass("required")
+			$("#data_naming_longitude , #data_naming_latitude").removeClass("required")
 			$('#data_file').prop('multiple', true)
 		}
 	})
+
+
+	function checkFile(){
+
+		//determine file type
+	  	var files = $("#data_file")[0]["files"];
+
+		if (output.dataType == "raw"){
+			//raw point data must be csv
+			if ( files[0].name.indexOf(".csv") > -1){
+	  			output.data = files[0].name
+	  			output.fileType = "csv" 
+	  		} else {
+	  			output.error = "Raw data must be in CSV format"
+	  		}
+		} else {
+			for (var f=0; f<files.length; f++){
+				var fileName = files[f].name
+
+				if (fileName.indexOf(".shp") > -1){ //check for shapefile
+		  			output.data = fileName
+		  			output.fileType = "shp"
+					break
+				} else if (fileName.indexOf(".geojson") > -1){ //check for geojson
+		  			output.data = fileName
+		  			output.fileType = "geojson"
+					break
+				} 
+			}
+
+			if (output.data == 1 || output.fileType == 1){
+				$('#data_file').val('')
+				output.error = "File type not recognized"
+			}
+		}
+	}
 
 
 	//raster section
@@ -31,7 +75,14 @@ $(document).ready(function(){
 	scanDir({ type: "scan", dir: globals }, function(options) {
 		$("#raster_list").append('<option id="blank_raster_list_item" value="">Select a Raster</option>')
 	    for (var op in options){
-	        $("#raster_list").append('<option value="' + options[op] + '">' + options[op] + '</option>')
+	    	var type = options[op].substr(0,options[op].indexOf("__"))
+
+	    	if ( !$("#optgroup_"+type).length ){
+	    		$("#raster_list").append('<optgroup id="optgroup_'+type+'" label="'+type+'"></optgroup>')
+	    	}
+	        
+	        $("#optgroup_"+type).append('<option value="' + options[op] + '">' + options[op] + '</option>')
+	    	
 	    }
     })
 
@@ -48,20 +99,32 @@ $(document).ready(function(){
 	    })
 	}
 
+	//set raster list
 	var raster 
     $("#raster_list").on("change", function(){
-    	$("#raster_table_body").empty()
     	$("#blank_raster_list_item").remove()
 
     	$('#raster_meta').show()
 
     	raster = $(this).val()
-    	var raster_meta = readJSON(globals + "/" + raster + "/meta_info.json")
+
+    	output.raster = raster
+
+    	// console.log(raster)
+
+    })
+
+    //display meta
+    $('#raster_list option').on("click", function(){
+
+    	$("#raster_table_body").empty()
+
+    	var viewRaster = $(this).val()
+    	var raster_meta = readJSON(globals + "/" + viewRaster + "/meta_info.json")
 
     	$.each(raster_meta, function(field, props){
     		$('#raster_table_body').append('<tr><td>'+field+'</td><td>'+props+'</td></tr>')
     	})
-
     })
 
 
@@ -104,84 +167,121 @@ $(document).ready(function(){
 	})
 
 
-	// TO DO - replicate functionality from DET tool ( see: det.js and getDir.php ) 
 	function confirmRequest(){
-		if(confirm("Send request results to " + output.email + "?")){
+		// console.log(output)
+		checkFile()
+
+		if ( output.error != 0 ){
+			alert(output.error)
+		} else if ( confirm("Send request results to " + $("#request_email").val() + "?") ){
+
 			//getQueue()
-			//buildQueue()
-			//ajax email
-			//confirmation page
-		}
-	}
+			var request
+			getQueue("request", function(log){ 
+				var requestLog = log.map(function(item) {
+			    	return parseInt(item);
+				})
+				request =  requestLog.length + 1
+				
+			})
+			// console.log(request)
 
-	function getQueue(){
-		//ajax read
-	}
+			// update output object
+			output.request = request
+			var date = new Date()
+			output.submission = Math.floor( date.getTime() / 1000 )		
+			output.email = $("#request_email").val() 
+			if ( $('#data_id').val() == "" ){
+				output.id = "id"
+			} else {
+				output.id = $('#data_id').val()
+			}
+			if (output.dataType == "raw"){
+				output.longitude = $('#data_naming_longitude').val()
+				output.latitude = $('#data_naming_latitude').val()
+			} 
 
-	function buildQueue(){
-		//ajax write
-	}
+			//uploadFiles()
+	  		var files = $("#data_file")[0]["files"];
+			console.log(files);
+			var fileData = new FormData();
+			for (var f=0; f<files.length; f++){
+				var file = files[f]
+				fileData.append(file.name, file);
+	    	}
+			fileData.append( "request", request )
+			fileData.append( "type", "upload" )
 
+			uploadFiles(fileData, function(x){})
 
-	//=====================================================================
-	//confirm and process request
-	function confirmRequest_old(){
-		if(confirm("Send request results to " + output.email + "?")){
-			$("#message").html("Submitting Request...")
-			hideShow("#content", "#confirm_loading")
-
-			buildQueue()
-
-			var queuePos
-			getQueue("priority", function(log){ 
+			//sendEmail()
+			var queue
+			getQueue("queue", function(log){ 
 				var queueLog = log.map(function(item) {
 			    	return parseInt(item);
 				})
-				if (output.priority == 1){
-					queuePos = _.without(queueLog, 0).length
-				} else {
-					queuePos =  queueLog.length
-				}
+				queue =  queueLog.length + 1
+				
 			})
-			
+			// console.log(queue)
+
+			//buildQueue()
+			buildQueue()
+
 			var confirmHTML = "" +
 		     		"Once your request has been processed an additional email will be sent containing details on how to access the data you requested. <br><br>" +
-					"Current position in queue: <b>" + queuePos + "</b><br><br>" +
+					"Current position in queue: <b>" + queue + "</b><br><br>" +
 					"<b>Request Summary</b>" +
-					"<br>Country: " + output.country +
-					"<br>GADM: " + output.level.substr(2) +
-					"<br>Boundary Year: " + output.year +
-					"<br>Data: " + output.rsub +
-					"<br>Data Years: " + output.ryear +
-					"<br>Include Raw Data: " + output.raw
-			
-			//send confirmation email
-		    $.ajax ({
-		        url: "getDir.php",
-		        data: { type : "email", email: output.email, queue: output.queue, message: confirmHTML },
-		        type: "post",
-		        dataType: "text",
-		        async: false,
-		        success: function(result) {
-		            console.log(result)
-		            $("#message").html("Request has been submitted")
-		    		hideShow("#confirm_loading", "#confirmation")
-		    		$("#confirm_text").html( "" + 
-		    			"An email has been sent to <b>" + output.email + "</b> confirming your submission <br>" +
-						"(please check your spam folder if you do not receive a confirmation email within a few minutes) <br><br>" +
-						confirmHTML 
-					)
-					
-		        }
-		    })				
+					"<br>Email: " + output.email +
+					"<br>Point Data Type: " + output.dataType +
+					"<br>Raster: "
+
+			if (output.raster.length > 1){
+				confirmHTML += "<p style='margin-top:0; margin-left:75px'>" 
+
+				for (var i=0; i<output.raster.length; i++){
+					confirmHTML += output.raster[i] + "<br>" 
+				}
+
+				confirmHTML += "</p>"
+			} else {
+				confirmHTML += output.raster[0]
+			}	
+
+			sendEmail(output.email, output.request, queue, confirmHTML)
+	
+			console.log(output)
 
 		}
 	}
-	
-	//ajax function to read queue contents
-	function getQueue_old(call, callback){
+
+
+	function uploadFiles(data, callback){
+	  	$.ajax({
+            type: 'post',
+            url: 'process.php',
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+	        async: false,
+	        success: function(result) {
+	            callback(result)
+	        }
+        }).done(function(data) {
+            console.log(data);
+        }).fail(function(jqXHR,status, errorThrown) {
+            console.log(errorThrown);
+            console.log(jqXHR.responseText);
+            console.log(jqXHR.status);
+        });
+
+	}
+
+	//ajax function to read queue contents for log.csv (request #) and pending.csv (position in queue)
+	function getQueue(call, callback){
 	    $.ajax ({
-	        url: "getDir.php",
+	        url: "process.php",
 	        data: { type : "read", call: call },
 	        type: "post",
 	        dataType: "json",
@@ -189,15 +289,16 @@ $(document).ready(function(){
 	        success: function(result) {
 	            callback(result)
 	        }
-	    })		
+	    })	
 	}
 
-	//ajax function to add request to queue
-	function buildQueue_old(){
+	//ajax function to add queue to log / pending
+	function buildQueue(){
 		var json_output = JSON.stringify(output)
+		console.log(json_output)
 	    $.ajax ({
-	        url: "getDir.php",
-	        data: { type : "write", action : json_output },
+	        url: "process.php",
+	        data: { type : "write", request : json_output },
 	        dataType: "text",
 	        type: "post",
 	        async: false,
@@ -207,11 +308,35 @@ $(document).ready(function(){
 	    })
 	}
 
-	function hideShow(hide, show){
-		$(hide).hide()
-		$(show).show()
+	// ajax function to send confirmation email
+	function sendEmail(email, request, queue, message){
+		
+		//send confirmation email
+	    $.ajax ({
+	        url: "process.php",
+	        data: { type : "email", email: email, request:request, queue: queue, message: message },
+	        type: "post",
+	        dataType: "text",
+	        async: false,
+	        success: function(result) {
+	            console.log(result)
+	    		$('#main').hide()
+	    		$('#confirmation').show()
+	    		$("#confirmation_text").html( "" + 
+	    			"An email has been sent to <b>" + email + "</b> confirming your submission <br>" +
+					"(please check your spam folder if you do not receive a confirmation email within a few minutes) <br><br>" +
+					message 
+				)
+				
+	        }
+	    })	
+
 	}
-	//=====================================================================
+
+
+	$("#confirmation_return").click(function(){
+		location.reload()
+	})
 
 
 })

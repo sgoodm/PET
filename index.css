@@ -2,6 +2,7 @@
 body {
 	padding:50px 10%;
     font-family: 'Open Sans', sans-serif;
+    min-width: 900px;
 }
 
 #header{
@@ -59,8 +60,9 @@ body {
 
 }
 
-	#raster_options>*{
-		display: inline-block;
+	#raster_options>select{
+		/*display: inline-block;*/
+		margin-left: 10%
 	}
 
 	#raster_meta{
@@ -85,4 +87,5 @@ body {
 
 #confirmation{
 	display: none;
+	padding: 20px;
 }
