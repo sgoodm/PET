@@ -201,8 +201,9 @@ if (count($r_queue) > 0){
 		$rterms[$r] = $rterms_meta["meta_license_terms"];
 		
 		$zipAll->addFile( $zipBase . $q_data["request"] ."_". $q_data["raster"][$r] .".csv", $q_data["request"] ."_". $q_data["raster"][$r] .".csv" );
+		
 		if ($rterms[$r] == "true"){
-			$zipAll->addFile( $raster_paths[$r] ); 
+			$zipAll->addFile( $raster_paths[$r], $raster_files[$r] ); 
 		}
 	}
 	
@@ -243,9 +244,17 @@ if (count($r_queue) > 0){
 		<a href="documentation.pdf"> Documentation (.pdf)</a><br>
 		<a href="'. $q_data["request"] . ".csv" .'"> Results (.csv)</a><br><br>';
 
+
+	$result_page .= "Indivudual Results<br>";
+	foreach ($q_data["raster"] as $r => $raster){
+		$result_page .= '<a href="'. $q_data["request"] .'_'. $raster .'.csv"> '. $q_data["raster"][$r] .'</a><br>';
+	}
+	
+
+	$result_page .= "<br>Rasters<br>";
 	foreach ($q_data["raster"] as $r => $raster){
 		if ($rterms[$r] == "true"){
-			$result_page .= '<a href="' . "../../../DET/uploads/globals/processed/". $raster .'/'. $raster_files[$r] .'"> Raster- '. $q_data["raster"][$r] .'</a><br>';
+			$result_page .= '<a href="' . "../../../../DET/uploads/globals/processed/". $raster .'/'. $raster_files[$r] .'">'. $q_data["raster"][$r] .'</a><br>';
 		}
 	}
 	
@@ -268,7 +277,7 @@ if (count($r_queue) > 0){
 
 	//send email to user with results page
 	$mail_to = $q_data["email"];
-	$mail_subject = "AidData - Data Request Results #".$q_data["request"];
+	$mail_subject = "AidData - Point Extraction Tool Data Request Results #".$q_data["request"];
 	$mail_message = "Your data request has been processed and can be accessed using the link below. <br><br>";
 	$mail_message .= "<a href='".$MAIL_DIR."/queue/available/".$q_data["request"]."/".$q_data["request"].".html'>Request #".$q_data["request"]."</a>";
 	$mail_headers = 'MIME-Version: 1.0' . "\r\n";

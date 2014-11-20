@@ -20,7 +20,7 @@ rb=src_ds.GetRasterBand(1)
 
 with open(myOutput, 'w') as f:
 
-	f.write( myId +", "+ myLon +", "+ myLat +", "+ myName +"\n" )
+	f.write( myId +","+ myLon +","+ myLat +","+ "loc_d_to_2012" +","+ myName +"\n" )
 	
 	count = 0
 
@@ -30,13 +30,29 @@ with open(myOutput, 'w') as f:
 		ds=ogr.Open(shp_filename)
 		lyr=ds.GetLayer()
 
+		# geo_id_list = {}
+		# for feat in lyr:
+		# 	geo_id =  feat.GetField("geoname_ID")
+		# 	if geo_id in geo_id_list:
+		# 		geo_id_list[geo_id] += 1
+		# 	else:
+		# 		geo_id_list[geo_id] = 1
+
+
 		for feat in lyr:
 			geom = feat.GetGeometryRef()
 
 			try:
-				geoid = feat.GetField(myId)
+				feat_id = feat.GetField(myId)
+				aid = feat.GetField("loc_d_to_2012")
+
+				# geo_id =  feat.GetField("geoname_ID")
+				# if geo_id in geo_id_list and geo_id_list[geo_id] > 1:	
+				# 	aid = aid / geo_id_list[geo_id]
+
 			except:
-				geoid = count
+				feat_id = count
+				aid= "BAD"
 			
 			count += 1
 
@@ -50,7 +66,7 @@ with open(myOutput, 'w') as f:
 
 			structval=rb.ReadRaster(px,py,1,1,buf_type=gdal.GDT_Float32) #Assumes 16 bit int aka 'short'
 			intval = struct.unpack('f' , structval) #use the 'short' format code (2 bytes) not int (4 bytes)
-			f.write(str(geoid) + ", " + str(mx) + ", " + str(my) + ", " + str(intval[0])+"\n")
+			f.write(str(feat_id) + "," + str(mx) + "," + str(my) + "," + str(aid) + "," + str(intval[0])+"\n")
 
 			# print (intval[0], file=f) #intval is a tuple, length=1 as we only asked for 1 pixel value 
 
@@ -64,9 +80,11 @@ with open(myOutput, 'w') as f:
 				my = float(row[myLat])
 
 				try:
-					geoid = row[myId]
+					feat_id = row[myId]
+					aid = row["loc_d_to_2012"]
 				except:
-					geoid = count
+					feat_id = count
+					aid = "BAD"
 				count += 1
 
 				px = int((mx - gt[0]) / gt[1]) #x pixel
@@ -74,4 +92,4 @@ with open(myOutput, 'w') as f:
 
 				structval=rb.ReadRaster(px, py, 1, 1, buf_type=gdal.GDT_Float32) #Assumes 16 bit int aka 'short'
 				intval = struct.unpack('f' , structval) #use the 'short' format code (2 bytes) not int (4 bytes)
-				f.write(str(geoid) + ", " + str(mx) + ", " + str(my) + ", " + str(intval[0])+"\n")
+				f.write(str(feat_id) + "," + str(mx) + "," + str(my) + "," + str(aid) + "," + str(intval[0])+"\n")

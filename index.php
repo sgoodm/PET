@@ -31,7 +31,7 @@
 
             <div id="data_identifier">
                 <div>Feature ID Field Name (optional -  defaults to 0,1,2,.. if no field exists)</div>
-                <label class="input"><input type="text" id="data_id" value="GeoID"></label>               
+                <label class="input"><input type="text" id="data_id" value="project_ID"></label>               
             </div>
 
             <div id="data_naming">
@@ -67,7 +67,7 @@
     </div>
 
     <div id="request">
-        Email: <input type="text" id="request_email" class="required" value="">
+        Email: <input type="text" id="request_email" class="required" value="sethgoodman02@gmail.com">
         <br>
         <br>
         <button id="request_submit"  type="button" disabled="true">Submit Request</button> 

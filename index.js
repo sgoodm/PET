@@ -2,11 +2,11 @@ $(document).ready(function(){
 
 	//init page
 	$('#data_vector').click()
-	$('#data_id').val('GeoID')
+	$('#data_id').val('project_ID')
 	$('#data_naming_x').val('x')
 	$('#data_naming_y').val('y')
 	$('#data_file').val('')
-	$('#request_email').val('')
+	$('#request_email').val('sethgoodman02@gmail.com')
 	$('#request_submit').prop('disabled', true)
 
 	var output = {	
