@@ -67,7 +67,7 @@
     </div>
 
     <div id="request">
-        Email: <input type="text" id="request_email" class="required" value="sethgoodman02@gmail.com">
+        Email: <input type="text" id="request_email" class="required" value="">
         <br>
         <br>
         <button id="request_submit"  type="button" disabled="true">Submit Request</button> 
