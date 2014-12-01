@@ -6,12 +6,13 @@ $(document).ready(function(){
 	$('#data_naming_x').val('x')
 	$('#data_naming_y').val('y')
 	$('#data_file').val('')
-	$('#request_email').val('sethgoodman02@gmail.com')
+	$('#request_email').val('')
 	$('#request_submit').prop('disabled', true)
 
 	var output = {	
 					"request":9999, "submission":0, "completion":0, "expiration":0, "email":"", 
-					"dataType":"vector", "data":1, "fileType":1, "id":"GeoID", "longitude":"longitude", "latitude":"latitude", "raster":[],
+					"dataType":"vector", "data":1, "fileType":1, "id":"GeoID", "include":"", 
+					"longitude":"longitude", "latitude":"latitude", "raster":[],
 					"error":0
 				}
 
@@ -196,6 +197,7 @@ $(document).ready(function(){
 			} else {
 				output.id = $('#data_id').val()
 			}
+			output.include = $('#data_inc').val()
 			if (output.dataType == "raw"){
 				output.longitude = $('#data_naming_longitude').val()
 				output.latitude = $('#data_naming_latitude').val()

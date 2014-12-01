@@ -34,6 +34,11 @@
                 <label class="input"><input type="text" id="data_id" value="project_ID"></label>               
             </div>
 
+            <div id="data_include">
+                <div>Name of Feature to Include with Results (comma separated for multiple fields)</div>
+                <label class="input"><input type="text" id="data_inc" value="total_c_to_2012"></label>               
+            </div>
+
             <div id="data_naming">
                 <div>Coordinate Naming in Raw Data:</div>
                 <label class="input">longitude: <input type="text" id="data_naming_longitude" value="longitude"></label>

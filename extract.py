@@ -12,6 +12,7 @@ myLat = sys.argv[5]
 myRaster = sys.argv[6]
 myOutput = sys.argv[7]
 myName = sys.argv[8]
+myInclude = sys.argv[9]
 
 src_filename = myRaster
 src_ds=gdal.Open(src_filename) 
@@ -19,10 +20,17 @@ gt=src_ds.GetGeoTransform()
 rb=src_ds.GetRasterBand(1)
 
 with open(myOutput, 'w') as f:
+	header =  myId +","+ myLon +","+ myLat +","
 
-	f.write( myId +","+ myLon +","+ myLat +","+ "loc_d_to_2012" +","+ myName +"\n" )
+	includes = myInclude.split(",")
+	for field in range(0, len(includes)):
+		header += includes[field] + ","  
 	
-	count = 0
+	header += myName + "\n" 
+	f.write(header)
+	
+	c = 0
+
 
 	if (myType == "vector"):
 
@@ -30,45 +38,43 @@ with open(myOutput, 'w') as f:
 		ds=ogr.Open(shp_filename)
 		lyr=ds.GetLayer()
 
-		# geo_id_list = {}
-		# for feat in lyr:
-		# 	geo_id =  feat.GetField("geoname_ID")
-		# 	if geo_id in geo_id_list:
-		# 		geo_id_list[geo_id] += 1
-		# 	else:
-		# 		geo_id_list[geo_id] = 1
-
-
 		for feat in lyr:
 			geom = feat.GetGeometryRef()
+			field_vals = []
 
 			try:
 				feat_id = feat.GetField(myId)
-				aid = feat.GetField("loc_d_to_2012")
-
-				# geo_id =  feat.GetField("geoname_ID")
-				# if geo_id in geo_id_list and geo_id_list[geo_id] > 1:	
-				# 	aid = aid / geo_id_list[geo_id]
-
 			except:
-				feat_id = count
-				aid= "BAD"
+				feat_id = c
+
+			for field in range(0, len(includes)):
+				try:
+					field_vals.append( feat.GetField(includes[field]) )
+				except:
+					field_vals.append( "BAD" )
+
 			
-			count += 1
+			c += 1
 
 			mx,my=geom.GetX(), geom.GetY()  #coord in map units
 
 			#Convert from map to pixel coordinates.
 			#Only works for geotransforms with no rotation.
-			#If raster is rotated, see http://code.google.com/p/metageta/source/browse/trunk/metageta/geometry.py#493
 			px = int((mx - gt[0]) / gt[1]) #x pixel
 			py = int((my - gt[3]) / gt[5]) #y pixel
 
-			structval=rb.ReadRaster(px,py,1,1,buf_type=gdal.GDT_Float32) #Assumes 16 bit int aka 'short'
-			intval = struct.unpack('f' , structval) #use the 'short' format code (2 bytes) not int (4 bytes)
-			f.write(str(feat_id) + "," + str(mx) + "," + str(my) + "," + str(aid) + "," + str(intval[0])+"\n")
+			structval=rb.ReadRaster(px,py,1,1,buf_type=gdal.GDT_Float32)
+			intval = struct.unpack('f' , structval) 
 
-			# print (intval[0], file=f) #intval is a tuple, length=1 as we only asked for 1 pixel value 
+			newRow = str(feat_id) + "," + str(mx) + "," + str(my) + "," 
+
+			for field in range(0, len(includes)):
+				newRow += str(field_vals[field]) + "," 
+
+			newRow += str(intval[0])+"\n"
+
+			f.write(newRow)
+
 
 	else:
 
@@ -81,15 +87,15 @@ with open(myOutput, 'w') as f:
 
 				try:
 					feat_id = row[myId]
-					aid = row["loc_d_to_2012"]
+					aid = row[myInclude]
 				except:
-					feat_id = count
+					feat_id = c
 					aid = "BAD"
-				count += 1
+				c += 1
 
 				px = int((mx - gt[0]) / gt[1]) #x pixel
 				py = int((my - gt[3]) / gt[5]) #y pixel
 
-				structval=rb.ReadRaster(px, py, 1, 1, buf_type=gdal.GDT_Float32) #Assumes 16 bit int aka 'short'
-				intval = struct.unpack('f' , structval) #use the 'short' format code (2 bytes) not int (4 bytes)
+				structval=rb.ReadRaster(px, py, 1, 1, buf_type=gdal.GDT_Float32) 
+				intval = struct.unpack('f' , structval)
 				f.write(str(feat_id) + "," + str(mx) + "," + str(my) + "," + str(aid) + "," + str(intval[0])+"\n")

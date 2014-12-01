@@ -78,7 +78,7 @@ if (count($r_queue) > 0){
 
 		//execute extract script
 		// $py_Vars = $dataType ." ". $point_file ." ". $longitude ." ". $latitude ." ". $raster_file ." ". $output_file; 
-		$py_vars = $q_data["dataType"] ." ". $file_points ." ". $q_data["id"] ." ". $q_data["longitude"] ." ". $q_data["latitude"] ." ". $file_raster ." ". $file_output ." ". $q_data["raster"][$i];
+		$py_vars = $q_data["dataType"] ." ". $file_points ." ". $q_data["id"] ." ". $q_data["longitude"] ." ". $q_data["latitude"] ." ". $file_raster ." ". $file_output ." ". $q_data["raster"][$i] ." ". $q_data["include"];
 		// var_dump($py_vars);
 		
 		$start_time = time();
