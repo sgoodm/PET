@@ -3,6 +3,7 @@ $(document).ready(function(){
 	//init page
 	$('#data_vector').click()
 	$('#data_id').val('project_ID')
+	$('#data_inc').val('')
 	$('#data_naming_x').val('x')
 	$('#data_naming_y').val('y')
 	$('#data_file').val('')

@@ -87,10 +87,15 @@ with open(myOutput, 'w') as f:
 
 				try:
 					feat_id = row[myId]
-					aid = row[myInclude]
 				except:
 					feat_id = c
-					aid = "BAD"
+
+				for field in range(0, len(includes)):
+					try:
+						field_vals.append( row[includes[field]] )
+					except:
+						field_vals.append( "BAD" )
+
 				c += 1
 
 				px = int((mx - gt[0]) / gt[1]) #x pixel
@@ -98,4 +103,12 @@ with open(myOutput, 'w') as f:
 
 				structval=rb.ReadRaster(px, py, 1, 1, buf_type=gdal.GDT_Float32) 
 				intval = struct.unpack('f' , structval)
-				f.write(str(feat_id) + "," + str(mx) + "," + str(my) + "," + str(aid) + "," + str(intval[0])+"\n")
+
+				newRow = str(feat_id) + "," + str(mx) + "," + str(my) + "," 
+
+				for field in range(0, len(includes)):
+					newRow += str(field_vals[field]) + "," 
+
+				newRow += str(intval[0])+"\n"
+
+				f.write(newRow)
