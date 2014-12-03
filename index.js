@@ -75,7 +75,7 @@ $(document).ready(function(){
 	var globals = "../DET/uploads/globals/processed"
 
 	scanDir({ type: "scan", dir: globals }, function(options) {
-		$("#raster_list").append('<option id="blank_raster_list_item" value="">Select a Raster</option>')
+		// $("#raster_list").append('<option id="blank_raster_list_item" value="">Select a Raster</option>')
 	    for (var op in options){
 	    	var type = options[op].substr(0,options[op].indexOf("__"))
 
@@ -104,7 +104,7 @@ $(document).ready(function(){
 	//set raster list
 	var raster 
     $("#raster_list").on("change", function(){
-    	$("#blank_raster_list_item").remove()
+    	// $("#blank_raster_list_item").remove()
 
     	$('#raster_meta').show()
 

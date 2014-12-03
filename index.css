@@ -3,12 +3,16 @@ body {
 	padding:50px 10%;
     font-family: 'Open Sans', sans-serif;
     min-width: 900px;
+    background:  rgb(88,108,128);
+    color: white;
 }
 
 #header{
 	padding: 10px 50px;
-    font-size: 26px;
-    border-bottom: 1px solid #464646
+    font-size: 36px;
+    border-bottom: 1px solid rgba(200,200,200,1);
+    font-family: 'Abel', sans-serif;
+
 }
 
 #data{
@@ -27,6 +31,10 @@ body {
 			display: block;
 			margin-top: 5px;
 			margin-left:10%;
+		}
+
+		input[type=text], button, select{
+			color: black;
 		}
 
 		#data_info>*{
@@ -62,8 +70,15 @@ body {
 
 	#raster_options>select{
 		/*display: inline-block;*/
-		margin-left: 10%
+		width:80%;
+		margin-left: 10%;
+		padding-left: 10px;
+		/*background: rgb(223,223,223);*/
 	}
+
+		optgroup{
+			margin-top: 5px;
+		}
 
 	#raster_meta{
 		display: none;

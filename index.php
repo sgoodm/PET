@@ -6,17 +6,25 @@
     <title>PET</title> 
     
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
 
     <link rel="stylesheet" href="index.css?<?php echo filectime('index.css') ?>" />    
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>    
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="index.js"></script>
 
 </head>
 
 <body>
 
-<div id="header"><span>Point Extraction Tool</span></div>
+<div id="header">
+    <span>Point Extraction Tool</span>
+</div>
 
 <div id="main">
 
@@ -87,6 +95,10 @@
     <button id="confirmation_return" type="button">Return</button>
 
 </div>
+
+
+<?php include("/var/www/html/aiddata/home/nav.php"); ?>  
+
 
 </body>
 
