@@ -13,7 +13,7 @@ set_time_limit(0);
 
 $COM_DIR = __DIR__; //local path to PET dir
 
-$DOMAIN = "128.239.119.254";
+$DOMAIN = "da.aiddata.wm.edu";
 $app = basename($COM_DIR);
 $MAIL_DIR = $DOMAIN . substr($COM_DIR, 13, strpos($COM_DIR, $app)-1); //http to PET dir
 
